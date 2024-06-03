@@ -206,21 +206,21 @@ import Button from '@/components/Button.vue';
         <p><b>Navegação Simples e Rápida:</b> A experiência de navegação no site é intuitiva, permitindo que os usuários
           encontrem facilmente o que estão procurando.</p>
         <p class="rate">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-        <p>Lucas Ribeiro</p>
+        <p>Nino Abravanel</p>
       </div>
       <div class="testimonial">
         <p>"</p>
         <p><b>Design Visual Atraente:</b> O site possui um design visualmente atraente que cativa os usuários desde o
           primeiro acesso.</p>
         <p class="rate">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-        <p>Felipe Araujo</p>
+        <p>Mbappe da silva</p>
       </div>
       <div class="testimonial">
         <p>"</p>
         <p><b>Checkout Ágil:</b> O processo de checkout é rápido e descomplicado, proporcionando uma experiência de
           compra eficiente.</p>
         <p class="rate">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-        <p>Vinicius Gazin</p>
+        <p>Buzeira</p>
       </div>
     </div>
   </div>
