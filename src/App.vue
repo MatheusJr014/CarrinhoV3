@@ -29,7 +29,7 @@
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" style="border-radius: 50rem; width: 170px; height: 40px; text-align: center; margin-top: -5px;">
           </form>
           <li class="nav-item nav-car ms-auto">
-            <router-link class="nav-link" aria-current="page" to="/cart"><span class="material-symbols-outlined">account_circle</span></router-link>
+            <router-link class="nav-link" aria-current="page" to="/login"><span class="material-symbols-outlined">account_circle</span></router-link>
           </li>
           <li class="nav-item nav-car ms-auto">
             <router-link class="nav-link" aria-current="page" to="/cart"><span class="material-symbols-outlined">shopping_cart</span></router-link>
