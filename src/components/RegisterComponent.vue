@@ -1,25 +1,58 @@
 <template>
-   <div class="container" id="app">
-        <div class="Box-Login">
-            <form class="login-form">
-                <img src="/src/assets/images/profile.svg" alt="Imagem de login" class="login-image">
-                <h3 class="login-title">Registrar</h3>
-                <input type="text" placeholder="Usuario" class="login-input">
-                <input type="text" placeholder="Email" class="login-input">
-                <input type="password" placeholder="Senha"  class="login-input">
-                <input type="password" placeholder="Repita a Senha"  class="login-input">
-             
-                <router-link class="link" aria-current="page" to="/"><button type="submit" class="login-button">Cadastrar</button></router-link>
-                
-                <!-- <a href="#" class="forgot-password">Esqueceu a senha?</a> -->
-                <p class="register-message">Já tem uma conta? <a href="/login" class="register-link">Faça o login!</a></p>
-                
-            </form>
-        </div>
-    </div>
-
+  <div class="container" id="app">
+       <div class="Box-Login">
+           <form class="login-form" @submit.prevent="saveCadastro">
+               <img src="/src/assets/images/profile.svg" alt="Imagem de login" class="login-image">
+               <h3 class="login-title">Registrar</h3>
+               <input type="text" v-model="userData.nome" placeholder="Nome" class="login-input">
+               <input type="text" v-model="userData.sobrenome" placeholder="Sobrenome" class="login-input">
+               <input type="email" v-model="userData.email" placeholder="Email" class="login-input">
+               <input type="password" v-model="userData.senha" placeholder="Senha" class="login-input">
+               <input type="password" v-model="confirmPassword" placeholder="Repita a Senha" class="login-input">
+            
+               <button type="submit" class="login-button">Cadastrar</button>
+               
+               <p class="register-message">Já tem uma conta? <router-link to="/login" class="register-link">Faça o login!</router-link></p>
+           </form>
+       </div>
+   </div>
 </template>
 
+<script>
+import RegisterDataService from '../services/RegisterDataService.js'
+
+export default {
+ name: 'newSignin',
+ data() {
+   return {
+     userData: {
+       nome: '',
+       sobrenome: '',
+       email: '',
+       senha: ''
+     },
+     confirmPassword: ''
+   };
+ }, 
+ methods: {
+   saveCadastro() {
+     if (this.userData.senha !== this.confirmPassword) {
+       alert("As senhas não coincidem.");
+       return;
+     }
+     RegisterDataService.create(this.userData)
+     .then(response => {
+       console.log(response.data);
+       this.submitted = true;
+       this.$router.push('/');
+     })
+     .catch(error => {
+       console.log(error);
+     });
+   }
+ }
+}
+</script>
 
 <style scoped>
 * {

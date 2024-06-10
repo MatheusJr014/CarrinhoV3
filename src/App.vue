@@ -53,7 +53,13 @@ import { ref } from 'vue';
 
 let num = ref(0);
 </script>
+<script>
 
+export default {
+    name: "app"
+  };
+
+</script>
 <style>
 .logo {
   display: flex;

@@ -1,4 +1,4 @@
-<script setup>
+<script setup >
 import RegisterComponent from '../components/RegisterComponent.vue';
 </script>
 
@@ -6,5 +6,4 @@ import RegisterComponent from '../components/RegisterComponent.vue';
 <div>
     <RegisterComponent />        
 </div>
-
 </template>

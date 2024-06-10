@@ -1,25 +1,48 @@
 <template>
   <div class="container" id="app">
-            <div class="Box-Login">
-                <form class="login-form">
-                    <img src="/src/assets/images/profile.svg" alt="Imagem de login" class="login-image">
-                    <h3 class="login-title">Login</h3>
-                    <input type="text" placeholder="Login" v-model="login" class="login-input">
-                    <input type="password" placeholder="Senha" v-model="senha" class="login-input">
-                    <router-link class="link" aria-current="page" to="/"><button type="submit" class="login-button">Entrar</button></router-link>
-                 
-                    <a href="#" class="forgot-password">Esqueceu a senha?</a>
-                    <p class="register-message">Você ainda não tem uma conta? <a href="/register" class="register-link">Crie uma agora!</a></p>
-                    
-                </form>
-            </div>
-        </div>
+    <div class="Box-Login">
+      <form class="login-form" @submit.prevent="loginUser">
+        <img src="/src/assets/images/profile.svg" alt="Imagem de login" class="login-image">
+        <h3 class="login-title">Login</h3>
+        <input type="text" placeholder="Email" v-model="login" class="login-input">
+        <input type="password" placeholder="Senha" v-model="senha" class="login-input">
+        <button type="submit" class="login-button">Entrar</button>
+        <a href="#" class="forgot-password">Esqueceu a senha?</a>
+        <p class="register-message">Você ainda não tem uma conta? <router-link to="/register" class="register-link">Crie uma agora!</router-link></p>
+      </form>
+    </div>
+  </div>
 </template>
 
-
 <script>
+import axios from 'axios';
 
-
+export default {
+  data() {
+    return {
+      email: '',
+      senha: ''
+    };
+  },
+  methods: {
+    loginUser() {
+      // Faça uma solicitação ao backend para validar o login
+      axios.post('/api/login', {
+        email: this.email,
+        senha: this.senha
+      })
+      .then(response => {
+        // Se o login for bem-sucedido, você pode redirecionar o usuário para outra página
+        console.log('Login bem-sucedido:', response.data);
+        this.$router.push('/'); // Redireciona para a página de dashboard
+      })
+      .catch(error => {
+        console.error('Erro de login:', error);
+        alert('Credenciais inválidas. Por favor, tente novamente.');
+      });
+    }
+  }
+}
 </script>
 
 <style scoped>
