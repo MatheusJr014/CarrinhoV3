@@ -48,7 +48,7 @@
             <option v-for="size in sizes" :key="size" :value="size">{{ size }}</option>
           </select>
           <span class="input-heading">Quantidade:</span>
-          <input type="number" v-model.number="quantity" class="form-control small-textinput" placeholder="0">
+          <input type="number" v-model.number="userData.quantidade" class="form-control small-textinput" placeholder="0">
           <h4 class="inventory" v-if="inventory > 0">Restam {{ inventory }} em estoque</h4>
           <h4 class="inventory" v-else>Sem estoque</h4>
           <button @click="addToCart" class="btn btn-primary bg-dark" style="margin: 5px;">Adicionar ao carrinho</button>
@@ -60,197 +60,210 @@
     </div>
   </div>
 </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        selectedMaterial: '',
-        quantity: 0,
-        inventory: 10,
-        currentIndex: 0,
-        images: [
-          { src: 'https://brunxind.com/wp-content/uploads/2022/04/camiseta-basic-streetwear-preta1.jpg' },
-          { src: 'https://brunxind.com/wp-content/uploads/2022/04/camiseta-basic-streetwear-preta3.jpg' },
-          { src: 'https://brunxind.com/wp-content/uploads/2022/04/camiseta-basic-streetwear-preta5.jpg' },
-          { src: 'https://brunxind.com/wp-content/uploads/2023/09/Camiseta-Streetwear-1.jpg' }
-        ],
-        discounts: [
-          { quantity: 2, percent: 5 },
-          { quantity: 3, percent: 10 },
-          { quantity: 4, percent: 15 },
-          { quantity: 5, percent: 20 }
-        ]
-      };
-    },
-    methods: {
-      async fetchProduct() {
+
+<script>
+import axios from 'axios';
+import CarrinhoDataService from '../services/CarrinhoDataService.js';
+
+export default {
+  name: 'newCartProduct',
+  data() {
+    return {
+      product: null,
+      selectedMaterial: '',
+      userData: {
+        quantidade: 0,
+        imageURL: '',
+        product: '', 
+        preco: 0
+      },
+      inventory: 0,
+      currentIndex: 0,
+      images: [],
+      sizes: [],
+      discounts: [
+        { quantity: 2, percent: 5 },
+        { quantity: 3, percent: 10 },
+        { quantity: 4, percent: 15 },
+        { quantity: 5, percent: 20 }
+      ]
+    };
+  },
+  methods: {
+    async fetchProduct() {
       try {
-        const response = await axios.get('https://localhost:7077/produto/100'); // Atualize o ID do produto
+        const response = await axios.get('https://localhost:7077/produto/2'); // Atualize o ID do produto
         const productData = response.data;
         
-        // Verifique se a propriedade ImageURL existe no produto
         if (productData.imageURL) {
-          // Supondo que imageURL seja uma única string
           this.images = [{ src: productData.imageURL }];
         } else {
-          this.images = []; // Caso contrário, defina images como um array vazio
+          this.images = [];
         }
         
         this.product = productData;
+        this.userData.product = productData.nome;
+        this.userData.imageURL = productData.imageURL;
+        this.userData.preco = productData.preco;
         this.inventory = productData.estoque;
         this.sizes = productData.tamanhos || [];
       } catch (error) {
         console.error('Erro ao buscar o produto:', error);
-        this.product = null; // Define o produto como null para mostrar a mensagem de produto não encontrado
+        this.product = null;
       }
-      },
-      addToCart() {
-        if (this.quantity > 0 && this.inventory >= this.quantity) {
-          console.log(`${this.quantity} ${this.selectedMaterial}`);
-          this.inventory -= this.quantity;
-          this.quantity = 0;
-        } else {
-          alert('Quantidade não disponível em estoque');
-        }
-      },
-      nextSlide() {
-        this.currentIndex = (this.currentIndex + 1) % this.images.length;
-      },
-      prevSlide() {
-        this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
-      },
-      changeSlide(index) {
-        this.currentIndex = index;
-      }
+    },
+    addToCart() {
+      this.payCart();
+    },
+    payCart() {
+      CarrinhoDataService.create(this.userData)
+        .then(response => {
+          console.log(response.data);
+          this.submitted = true;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    nextSlide() {
+      this.currentIndex = (this.currentIndex + 1) % this.images.length;
+    },
+    prevSlide() {
+      this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+    },
+    changeSlide(index) {
+      this.currentIndex = index;
     }
-  };
-  </script>
-  
-  <style scoped>
-  .product-img img {
-    width: 100%;
-    height: auto;
-    border: 1px solid #ccc;
+  },
+  mounted() {
+    this.fetchProduct();
   }
-  
-  .product-container {
-    max-width: 1000px;
-    margin: 20px auto;
-  }
-  
-  .product-input {
-    margin-bottom: 10px;
-  }
-  
-  .input-heading {
-    font-weight: bold;
-    margin-top: 10px;
-    display: block;
-  }
-  
-  .small-textinput {
-    height: 35px;
-    width: 100%;
-    max-width: 100px;
-  }
-  
-  .inventory {
-    color: green;
-  }
-  
-  .product-container {
-    margin-top: 60px;
-  }
-  
-  .inventory {
-    font-size: small;
-  }
-  
-  .carousel {
-    position: relative;
-  }
-  
-  .carousel-inner {
-    position: relative;
-    width: 100%;
-    height: 400px;
-  }
-  
-  .carousel-item {
-    display: none;
-    transition: opacity 0.6s ease-in-out;
-  }
-  
-  .carousel-item.active {
-    display: block;
-  }
-  
-  .carousel img {
-    width: 100%;
-    height: auto;
-  }
-  
-  .carousel-control-prev,
-  .carousel-control-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
-    cursor: pointer;
-  }
-  
-  .carousel-control-prev {
-    left: 0;
-    color: black;
-  }
-  
-  .carousel-control-next {
-    right: 0;
-    color: black;
-  }
-  
-  .carousel-control-prev-icon {
-    color: black;
-  }
-  
-  .carousel-control-next,
-  .dots {
-    color: black;
-  }
-  
-  .thumbnail {
-    width: 50px;
-    height: auto;
-    cursor: pointer;
-    margin-right: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  .thumbnail.active {
-    border-color: #007bff;
-  }
-  
-  .carousel-thumbnails {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .carousel-thumbnails img {
-    width: 80px;
-    height: 80px;
-    cursor: pointer;
-    margin-right: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  .table {
-    border: #f5f5ff;
-  }
-  
-  .preco {
-    color: #34e7f8;
-  }
-  </style>
-  
+};
+</script>
+
+<style scoped>
+.product-img img {
+  width: 100%;
+  height: auto;
+  border: 1px solid #ccc;
+}
+
+.product-container {
+  max-width: 1000px;
+  margin: 20px auto;
+}
+
+.product-input {
+  margin-bottom: 10px;
+}
+
+.input-heading {
+  font-weight: bold;
+  margin-top: 10px;
+  display: block;
+}
+
+.small-textinput {
+  height: 35px;
+  width: 100%;
+  max-width: 100px;
+}
+
+.inventory {
+  color: green;
+}
+
+.product-container {
+  margin-top: 60px;
+}
+
+.inventory {
+  font-size: small;
+}
+
+.carousel {
+  position: relative;
+}
+
+.carousel-inner {
+  position: relative;
+  width: 100%;
+  height: 400px;
+}
+
+.carousel-item {
+  display: none;
+  transition: opacity 0.6s ease-in-out;
+}
+
+.carousel-item.active {
+  display: block;
+}
+
+.carousel img {
+  width: 100%;
+  height: auto;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  cursor: pointer;
+}
+
+.carousel-control-prev {
+  left: 0;
+  color: black;
+}
+
+.carousel-control-next {
+  right: 0;
+  color: black;
+}
+
+.carousel-control-prev-icon {
+  color: black;
+}
+
+.carousel-control-next,
+.dots {
+  color: black;
+}
+
+.thumbnail {
+  width: 50px;
+  height: auto;
+  cursor: pointer;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+}
+
+.thumbnail.active {
+  border-color: #007bff;
+}
+
+.carousel-thumbnails {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.carousel-thumbnails img {
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+}
+
+.table {
+  border: #f5f5ff;
+}
+
+.preco {
+  color: #34e7f8;
+}
+</style>

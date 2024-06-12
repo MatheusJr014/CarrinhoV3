@@ -55,7 +55,7 @@ onMounted(() => {
           <img :src="product.imageURL" alt="" />
           <h6 class="card-title">{{ product.nome }}</h6>
           <p class="product-price"> <b>R$ {{ product.preco }}</b></p>
-          <router-link :to="`/product/${product.id}`">
+          <router-link :to="`/product`">
             <a style="background-color: #212529; border: none;" href="#" class="btn btn-primary">
               Adicionar ao carrinho
             </a>
